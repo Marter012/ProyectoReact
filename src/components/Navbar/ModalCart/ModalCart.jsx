@@ -24,15 +24,35 @@ import {
   TotalStyled,
 } from './ModalCartStyles';
 import { ModalOverlayStyled } from '../NavbarStyles';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearCart, toggleHiddenCart } from '../../../redux/cart/cartSlice';
+import { useEffect } from 'react';
 
-const ModalCart = ({hiddenCart , setHiddenCart}) => {
-   const navigate = useNavigate() 
+const ModalCart = () => {
+  const {cartItems, shippingCost} = useSelector(state => state.state.cart)
+
+  const hiddenCart = useSelector(state=> state.cart.hidden)
+
+  const totalPrice = cartItems.reduce((acc, item )=> {
+    return acc += item.price * item.quantity
+  },0);
+
+  const dispatch = useDispatch()
+
+  const navigate = useNavigate() 
+
+  useEffect(() => {
+    if(!hiddenCart) {
+      dispatch(toggleHiddenCart())
+    }
+  }, [dispatch])
+  
 
   return (
     <>
       {!hiddenCart && (
         <ModalOverlayStyled
-          onClick={() => setHiddenCart(!hiddenCart)}
+          onClick={() => dispatch(toggleHiddenCart())}
           isHidden={hiddenCart}
         />
       )}
@@ -49,7 +69,7 @@ const ModalCart = ({hiddenCart , setHiddenCart}) => {
               <CloseButtonStyled
                 className='close__modal '
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setHiddenCart(!hiddenCart)}
+                onClick={() => dispatch(toggleHiddenCart())}
               >
                 <MdOutlineClose size='24px' />
               </CloseButtonStyled>
@@ -59,7 +79,7 @@ const ModalCart = ({hiddenCart , setHiddenCart}) => {
               <TitleStyled>
                 <h1>Tus Productos</h1>
                 <Increase
-                  onClick={e=>e.preventDefault()}
+                  onClick={()=> dispatch(clearCart())}
                   bgColor='var(--magenta)'
                   disabled={!cartItems.length}
                 >
@@ -70,11 +90,12 @@ const ModalCart = ({hiddenCart , setHiddenCart}) => {
               <ProductsWrapperStyled>
                 {cartItems.length ? (
                   cartItems.map(item => (
-                    <ModalCartCard key={item.id} {...item} />
-                  ))
-                ) : (
-                  <p>No hay productos en el carrito</p>
-                )}
+                    <ModalCartCard key={item.id} {...item}  />
+                  ))                  
+                ): (
+                    <p>No hay productos en el carrito</p>
+                  )
+                }
               </ProductsWrapperStyled>
             </MainContainerStyled>
 

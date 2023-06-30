@@ -8,16 +8,21 @@ import {
   ContainerPrice,
   ProductosCard,
 } from './CardsProductosStyles';
+import {useDispatch} from 'react-redux'
+import { addToCart } from '../../redux/cart/cartSlice';
 
 const CardProducto = ({ img, title, desc, price, id }) => {
+  
+  const dispatch = useDispatch();
+  
   return (
     <ProductosCard>
-      <img src={''} alt='La Aco' />
-      <h2>La Aco</h2>
-      <p>Cheta la gorra</p>
+      <img src={img} alt={title} />
+      <h2>{title}</h2>
+      <p>{desc}</p>
       <ContainerPrice>
-        <CardPrice>{formatPrice(3000)}</CardPrice>
-        <Button onClick={e=>e.preventDefault()}>Agregar</Button>
+        <CardPrice>{formatPrice(price)}</CardPrice>
+        <Button onClick={()=> dispatch(addToCart({id,img,title,desc,price}))}>Agregar</Button>
       </ContainerPrice>
     </ProductosCard>
   );

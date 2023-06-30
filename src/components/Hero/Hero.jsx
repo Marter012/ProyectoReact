@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { AiOutlineSearch } from 'react-icons/ai';
 
 import Button from '../UI/Button/Button';
+import {useDispatch, useSelector} from 'react-redux'
+import {selectCategory} from '../../redux/categories/categoriesSlice'
 
-import { useDispatch, useSelector } from 'react-redux';
-import { selectCategory } from '../../redux/categories/categoriesSlice';
 import {
   HeroContainerStyled,
   HeroFormStyled,
@@ -12,33 +12,32 @@ import {
   IconWrapperStyled,
 } from './HeroStyles';
 
-const Hero = ({ doScroll }) => {
-  const [value, setValue] = useState('');
+const Hero = ({doScroll}) => {
 
-  const listOfCategories = useSelector(
-    state => state.categories.categories
-  ).map(category => category.category);
+  const [value ,setValue] = useState('');
 
-  const dispatch = useDispatch();
+  const ListOfCategories = useSelector(state => state.categories.categories).map(category => category.category)
 
-  const handlerSubmit = (e, value) => {
+  const dispatch = useDispatch()
+
+  const handlerSubmit = (e, value)=> {
     e.preventDefault();
 
-    const newCategory = value.trim().toLowerCase().split(' ').join('');
-
-    const selectedCategory = listOfCategories.find(
+    const newCategory = value.trim().toLowerCase().split(' ').join('')
+  
+    const selectedCategory = ListOfCategories.find(
       category => category.toLowerCase() === newCategory
-    );
+    )
 
-    if (selectedCategory) {
-      dispatch(selectCategory(selectedCategory));
-      doScroll();
-    } else {
-      return alert('Categoria no encontrada');
+    if(selectedCategory){
+      dispatch(selectCategory(selectedCategory))
+      doScroll()
+    }else {
+      return alert('Categoria no encontrada')
     }
-
-    setValue('');
-  };
+    setValue('')
+  }
+  
 
   return (
     <HeroContainerStyled>

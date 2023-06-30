@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { FaUserAlt } from 'react-icons/fa';
@@ -9,6 +9,7 @@ import CartIcon from './CartIcon/CartIcon';
 import ModalCart from './ModalCart/ModalCart';
 import ModalUser from './ModalUser/ModalUser';
 
+import { toggleMenuHidden } from '../../redux/user/userSlice';
 import {
   CartNavStyled,
   LinkContainerStyled,
@@ -18,15 +19,19 @@ import {
   UserContainerStyled,
   UserNavStyled,
 } from './NavbarStyles';
+import { useDispatch, useSelector } from 'react-redux';
 
 function Navbar() {
-  const [hiddenCart , setHiddenCart] = useState(true)
 
+  const currenUser = useSelector(state => state.user.currenUser)
+
+  const dispatch = useDispatch()
+  
   const navigate = useNavigate()
   
   return (
     <NavbarContainerStyled>
-      <ModalCart hiddenCart={hiddenCart} setHiddenCart={setHiddenCart} />
+      <ModalCart />
       <ModalUser />
       <div>
         <Link to='/'>
@@ -47,12 +52,13 @@ function Navbar() {
         </motion.div>
 
         <CartNavStyled>
-          <CartIcon hiddenCart={hiddenCart} setHiddenCart={setHiddenCart} />
+          <CartIcon />
         </CartNavStyled>
 
         <UserNavStyled>
-          <UserContainerStyled onClick={()=> navigate('/register')}>
-            <SpanStyled>Inicia Sesion</SpanStyled>
+          <UserContainerStyled onClick={()=>currenUser ? dispatch(toggleMenuHidden()) 
+          : navigate('/register')}>
+            <SpanStyled>{currenUser ? `${currenUser.nombre}` : 'Inicia Sesion'}</SpanStyled>
             <FaUserAlt />
           </UserContainerStyled>
         </UserNavStyled>
